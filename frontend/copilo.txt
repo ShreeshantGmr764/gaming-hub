@@ -1,0 +1,8 @@
+Always use it 
+font sans 
+font mono 
+responsive 
+same color pallate in all pages 
+same shadow in divs 
+do some seo 
+donot change any content make it as it is
