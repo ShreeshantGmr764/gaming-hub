@@ -1,57 +1,52 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Signup = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const navigate = useNavigate();
 
-  const [errors, setErrors] = useState({});
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [password2, setPassword2] = useState('');
 
-  const validateForm = () => {
-    const newErrors = {};
-    let isValid = true;
-
-    // Email Validation
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required.";
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email.";
-      isValid = false;
-    }
-
-    // Password Validation
-    if (!formData.password.trim()) {
-      newErrors.password = "Password is required.";
-      isValid = false;
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters long.";
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
+  async function submit(e) {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Form Submitted:", formData);
-      // You can make an API call here, e.g., axios.post(...)
+
+    try {
+      const res = await axios.post('http://localhost:5000/api/users/register', { name, email, password, password2 });
+      if (res.data.email) {
+        alert('User already exists');
+      } else {
+        alert('Registration successful! Please log in.');
+        navigate('/login');
+      }
+    } catch (e) {
+      alert('Error occurred during registration');
+      console.log(e);
     }
-  };
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-600">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md dark:bg-gray-400">
         <h2 className="text-2xl font-bold text-center text-gray-900">Sign Up</h2>
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={submit}>
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              autoComplete="name"
+              required
+              className="w-full p-3 mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="Enter your name"
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email Address
@@ -61,13 +56,11 @@ const Signup = () => {
               name="email"
               type="email"
               autoComplete="email"
-              value={formData.email}
-              onChange={handleChange}
               required
               className="w-full p-3 mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Enter your email"
+              onChange={(e) => setEmail(e.target.value)}
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
@@ -78,13 +71,26 @@ const Signup = () => {
               name="password"
               type="password"
               autoComplete="current-password"
-              value={formData.password}
-              onChange={handleChange}
               required
               className="w-full p-3 mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Enter your password"
+              onChange={(e) => setPassword(e.target.value)}
             />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+          </div>
+          <div>
+            <label htmlFor="password2" className="block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <input
+              id="password2"
+              name="password2"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="w-full p-3 mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="Confirm your password"
+              onChange={(e) => setPassword2(e.target.value)}
+            />
           </div>
           <div>
             <button
@@ -98,9 +104,12 @@ const Signup = () => {
 
         <div className="text-center">
           <p className="text-sm text-gray-600">OR</p>
-          <a href="/login" className="text-indigo-600 hover:text-indigo-500">
+          <Link
+            to="/login"
+            className="text-indigo-600 hover:text-indigo-500"
+          >
             Sign in
-          </a>
+          </Link>
         </div>
       </div>
     </div>

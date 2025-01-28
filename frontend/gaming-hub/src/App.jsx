@@ -8,6 +8,7 @@ import Login from './components/Login'
 import Signup from './components/SignUp'
 
 
+
 const App = () => {
   return (
     <div>
@@ -18,7 +19,6 @@ const App = () => {
         <Route path='/about' element={<About />} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
-        
       </Routes>
     </div>
   )
